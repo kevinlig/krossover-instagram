@@ -25,7 +25,9 @@
 - (id)initWithCoder:(NSCoder *)aDecoder {
     // this, along with encodeWithCoder will allow the model to be written and read from NSData (so we can toss it into the SQLite database)
     
-    if (self == [super init]) {
+    self = [super init];
+    
+    if (self) {
         self.instagramId = [aDecoder decodeObjectForKey:@"instagramId"];
         self.userName = [aDecoder decodeObjectForKey:@"userName"];
         self.date = [aDecoder decodeObjectForKey:@"date"];

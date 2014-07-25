@@ -13,7 +13,8 @@
 @synthesize userName, comment;
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
-    if (self == [super init]) {
+    self = [super init];
+    if (self) {
         self.userName = [aDecoder decodeObjectForKey:@"userName"];
         self.comment = [aDecoder decodeObjectForKey:@"comment"];
     }
