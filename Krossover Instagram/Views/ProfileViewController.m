@@ -8,7 +8,9 @@
 
 #import "ProfileViewController.h"
 
-@interface ProfileViewController ()
+@interface ProfileViewController () {
+    int _loadStatus;
+}
 
 @property (nonatomic, weak) IBOutlet UILabel *userNameLabel;
 @property (nonatomic, weak) IBOutlet UILabel *realNameLabel;
@@ -59,6 +61,8 @@
         // load the current user's profile
         [self loadUserProfile:nil];
         
+        _loadStatus = 1;
+        
         // add a log out button (only available on the current user's profile when accessed from the profile tab)
         UIBarButtonItem *logoutButton = [[UIBarButtonItem alloc]initWithTitle:@"Log Out" style:UIBarButtonItemStylePlain target:self action:@selector(logOut:)];
         [self.navigationItem setRightBarButtonItem:logoutButton];
@@ -67,6 +71,15 @@
         if (self.tabBarController.delegate == nil) {
             self.tabBarController.delegate = self;
         }
+    }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    // reload the view (for the current user's profile tab) if the initial load failed
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"loggedIn"] != nil && self.sideloadProfile != YES && _loadStatus == 3) {
+        
+        _loadStatus = 1;
+        [self loadUserProfile:nil];
     }
 }
 
@@ -82,13 +95,15 @@
         
         if (userProfile == nil || profileError != nil) {
             // something went wrong
+            _loadStatus = 3;
+            
             UIAlertView *errorAlert = [[UIAlertView alloc]initWithTitle:@"Profile Error" message:profileError.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [errorAlert show];
             
             return;
         }
         
-        
+        _loadStatus = 2;
         [self displayProfile: userProfile];
 
     }];
